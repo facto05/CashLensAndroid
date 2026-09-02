@@ -27,4 +27,12 @@ class WorkScheduler @Inject constructor(private val workManager: WorkManager) {
             "recurring", ExistingPeriodicWorkPolicy.UPDATE, request
         )
     }
+
+    fun scheduleReminder(intervalHours: Long = 24) {
+        val request = PeriodicWorkRequestBuilder<com.facto.cashlens.worker.ReminderWorker>(intervalHours, TimeUnit.HOURS)
+            .build()
+        workManager.enqueueUniquePeriodicWork(
+            "reminder", ExistingPeriodicWorkPolicy.UPDATE, request
+        )
+    }
 }
