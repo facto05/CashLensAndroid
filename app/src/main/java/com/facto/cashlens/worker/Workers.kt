@@ -4,21 +4,24 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.facto.cashlens.core.network.Resource
+import com.facto.cashlens.data.repository.SyncRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import javax.inject.Inject
 
 @HiltWorker
 class SyncWorker @AssistedInject constructor(
     @Assisted context: Context,
-    @Assisted params: WorkerParameters
+    @Assisted params: WorkerParameters,
+    private val syncRepository: SyncRepository
 ) : CoroutineWorker(context, params) {
 
-    @Inject lateinit var syncRepository: com.facto.cashlens.data.repository.AuthRepository
-
     override suspend fun doWork(): Result {
-        // ponytail: real sync (POST /sync + pull updated_after) added when backend ready
-        return Result.success()
+        return when (syncRepository.syncWithServer()) {
+            is Resource.Success -> Result.success()
+            is Resource.Error -> Result.retry()
+            Resource.Loading -> Result.retry()
+        }
     }
 }
 

@@ -3,6 +3,8 @@ package com.facto.cashlens.data.remote
 import com.facto.cashlens.data.remote.model.AuthResponse
 import com.facto.cashlens.data.remote.model.LoginRequest
 import com.facto.cashlens.data.remote.model.RegisterRequest
+import com.facto.cashlens.data.remote.model.SyncRequest
+import com.facto.cashlens.data.remote.model.SyncResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 
@@ -18,4 +20,7 @@ interface CashLensApi {
 
     @POST("auth/logout")
     suspend fun logout()
+
+    @POST("sync")
+    suspend fun sync(@Body request: SyncRequest): SyncResponse
 }

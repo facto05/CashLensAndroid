@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.facto.cashlens.data.local.CashLensDatabase
 import com.facto.cashlens.data.local.dao.BudgetDao
 import com.facto.cashlens.data.local.dao.CategoryDao
+import com.facto.cashlens.data.local.dao.SyncQueueDao
 import com.facto.cashlens.data.local.dao.TransactionDao
 import dagger.Module
 import dagger.Provides
@@ -32,4 +33,7 @@ object DatabaseModule {
 
     @Provides
     fun provideBudgetDao(db: CashLensDatabase): BudgetDao = db.budgetDao()
+
+    @Provides
+    fun provideSyncQueueDao(db: CashLensDatabase): SyncQueueDao = db.syncQueueDao()
 }

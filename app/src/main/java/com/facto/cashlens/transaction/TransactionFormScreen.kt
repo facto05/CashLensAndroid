@@ -20,14 +20,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.facto.cashlens.category.CategoryListViewModel
+import com.facto.cashlens.component.CategoryPicker
 import com.facto.cashlens.domain.model.TransactionType
 
 @Composable
 fun TransactionFormScreen(
     onSaved: () -> Unit,
-    viewModel: TransactionFormViewModel = hiltViewModel()
+    transactionViewModel: TransactionFormViewModel = hiltViewModel(),
+    categoryViewModel: CategoryListViewModel = hiltViewModel()
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by transactionViewModel.state.collectAsStateWithLifecycle()
+    val categories by categoryViewModel.categories.collectAsStateWithLifecycle(initialValue = emptyList())
 
     LaunchedEffect(state.saved) {
         if (state.saved) onSaved()
@@ -43,11 +47,11 @@ fun TransactionFormScreen(
             Text("Add Transaction", style = MaterialTheme.typography.headlineSmall)
             Spacer(Modifier.height(16.dp))
 
-            Row {
-                TextButton(onClick = { viewModel.onTypeChange(TransactionType.EXPENSE) }) {
+            androidx.compose.foundation.layout.Row {
+                TextButton(onClick = { transactionViewModel.onTypeChange(TransactionType.EXPENSE) }) {
                     Text("Expense", color = if (state.type == TransactionType.EXPENSE) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface)
                 }
-                TextButton(onClick = { viewModel.onTypeChange(TransactionType.INCOME) }) {
+                TextButton(onClick = { transactionViewModel.onTypeChange(TransactionType.INCOME) }) {
                     Text("Income", color = if (state.type == TransactionType.INCOME) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface)
                 }
             }
@@ -56,25 +60,24 @@ fun TransactionFormScreen(
 
             OutlinedTextField(
                 value = state.amount,
-                onValueChange = viewModel::onAmountChange,
+                onValueChange = transactionViewModel::onAmountChange,
                 label = { Text("Amount") },
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(Modifier.height(8.dp))
 
-            OutlinedTextField(
-                value = state.categoryId,
-                onValueChange = viewModel::onCategoryChange,
-                label = { Text("Category ID") },
-                modifier = Modifier.fillMaxWidth()
+            CategoryPicker(
+                categories = categories,
+                selectedId = state.categoryId,
+                onSelected = transactionViewModel::onCategoryChange
             )
 
             Spacer(Modifier.height(8.dp))
 
             OutlinedTextField(
                 value = state.note,
-                onValueChange = viewModel::onNoteChange,
+                onValueChange = transactionViewModel::onNoteChange,
                 label = { Text("Note (optional)") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -84,7 +87,7 @@ fun TransactionFormScreen(
             if (state.isSaving) {
                 CircularProgressIndicator()
             } else {
-                Button(onClick = viewModel::save, modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = transactionViewModel::save, modifier = Modifier.fillMaxWidth()) {
                     Text("Save")
                 }
             }
@@ -94,12 +97,5 @@ fun TransactionFormScreen(
                 Text(msg, color = MaterialTheme.colorScheme.error)
             }
         }
-    }
-}
-
-@Composable
-private fun Row(content: @Composable () -> Unit) {
-    androidx.compose.foundation.layout.Row {
-        content()
     }
 }
