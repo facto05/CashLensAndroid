@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.facto.cashlens.auth.AuthScreen
 import com.facto.cashlens.category.CategoryFormScreen
 import com.facto.cashlens.category.CategoryListScreen
+import com.facto.cashlens.stats.StatsScreen
 import com.facto.cashlens.transaction.TransactionFormScreen
 import com.facto.cashlens.transaction.TransactionListScreen
 import com.facto.cashlens.ui.theme.CashLensTheme
@@ -48,6 +49,7 @@ class MainActivity : ComponentActivity() {
 sealed class Screen {
     data object Auth : Screen()
     data object Home : Screen()
+    data object Stats : Screen()
     data object TransactionList : Screen()
     data object TransactionForm : Screen()
     data object CategoryList : Screen()
@@ -61,9 +63,11 @@ fun AppRoot() {
     when (currentScreen) {
         Screen.Auth -> AuthScreen(onAuthenticated = { currentScreen = Screen.Home })
         Screen.Home -> HomeScreen(
+            onStatsClick = { currentScreen = Screen.Stats },
             onTransactionsClick = { currentScreen = Screen.TransactionList },
             onCategoriesClick = { currentScreen = Screen.CategoryList }
         )
+        Screen.Stats -> StatsScreen()
         Screen.TransactionList -> TransactionListScreen(
             onAddClick = { currentScreen = Screen.TransactionForm }
         )
@@ -81,6 +85,7 @@ fun AppRoot() {
 
 @Composable
 fun HomeScreen(
+    onStatsClick: () -> Unit,
     onTransactionsClick: () -> Unit,
     onCategoriesClick: () -> Unit
 ) {
@@ -88,6 +93,10 @@ fun HomeScreen(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("CashLens Dashboard", style = MaterialTheme.typography.headlineMedium)
             Spacer(Modifier.height(24.dp))
+            Button(onClick = onStatsClick) {
+                Text("View Statistics")
+            }
+            Spacer(Modifier.height(12.dp))
             Button(onClick = onTransactionsClick) {
                 Text("View Transactions")
             }
