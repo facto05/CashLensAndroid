@@ -23,6 +23,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.facto.cashlens.auth.AuthScreen
+import com.facto.cashlens.budget.BudgetFormScreen
+import com.facto.cashlens.budget.BudgetListScreen
 import com.facto.cashlens.category.CategoryFormScreen
 import com.facto.cashlens.category.CategoryListScreen
 import com.facto.cashlens.stats.StatsScreen
@@ -54,6 +56,8 @@ sealed class Screen {
     data object TransactionForm : Screen()
     data object CategoryList : Screen()
     data object CategoryForm : Screen()
+    data object BudgetList : Screen()
+    data object BudgetForm : Screen()
 }
 
 @Composable
@@ -65,7 +69,8 @@ fun AppRoot() {
         Screen.Home -> HomeScreen(
             onStatsClick = { currentScreen = Screen.Stats },
             onTransactionsClick = { currentScreen = Screen.TransactionList },
-            onCategoriesClick = { currentScreen = Screen.CategoryList }
+            onCategoriesClick = { currentScreen = Screen.CategoryList },
+            onBudgetsClick = { currentScreen = Screen.BudgetList }
         )
         Screen.Stats -> StatsScreen()
         Screen.TransactionList -> TransactionListScreen(
@@ -80,6 +85,12 @@ fun AppRoot() {
         Screen.CategoryForm -> CategoryFormScreen(
             onSaved = { currentScreen = Screen.CategoryList }
         )
+        Screen.BudgetList -> BudgetListScreen(
+            onAddClick = { currentScreen = Screen.BudgetForm }
+        )
+        Screen.BudgetForm -> BudgetFormScreen(
+            onSaved = { currentScreen = Screen.BudgetList }
+        )
     }
 }
 
@@ -87,7 +98,8 @@ fun AppRoot() {
 fun HomeScreen(
     onStatsClick: () -> Unit,
     onTransactionsClick: () -> Unit,
-    onCategoriesClick: () -> Unit
+    onCategoriesClick: () -> Unit,
+    onBudgetsClick: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -103,6 +115,10 @@ fun HomeScreen(
             Spacer(Modifier.height(12.dp))
             Button(onClick = onCategoriesClick) {
                 Text("Manage Categories")
+            }
+            Spacer(Modifier.height(12.dp))
+            Button(onClick = onBudgetsClick) {
+                Text("Manage Budgets")
             }
         }
     }

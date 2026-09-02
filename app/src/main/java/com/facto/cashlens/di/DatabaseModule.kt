@@ -3,6 +3,7 @@ package com.facto.cashlens.di
 import android.content.Context
 import androidx.room.Room
 import com.facto.cashlens.data.local.CashLensDatabase
+import com.facto.cashlens.data.local.dao.BudgetDao
 import com.facto.cashlens.data.local.dao.CategoryDao
 import com.facto.cashlens.data.local.dao.TransactionDao
 import dagger.Module
@@ -28,4 +29,7 @@ object DatabaseModule {
 
     @Provides
     fun provideCategoryDao(db: CashLensDatabase): CategoryDao = db.categoryDao()
+
+    @Provides
+    fun provideBudgetDao(db: CashLensDatabase): BudgetDao = db.budgetDao()
 }
