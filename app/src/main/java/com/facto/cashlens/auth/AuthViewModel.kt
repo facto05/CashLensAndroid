@@ -47,7 +47,7 @@ class AuthViewModel @Inject constructor(
             when (val result = call(state)) {
                 is Resource.Success -> _uiState.update { it.copy(isLoading = false, isAuthenticated = true) }
                 is Resource.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
-                Resource.Loading -> Unit
+                Resource.Loading -> _uiState.update { it.copy(isLoading = true) }
             }
         }
     }

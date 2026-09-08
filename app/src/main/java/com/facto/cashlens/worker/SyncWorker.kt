@@ -18,9 +18,8 @@ class SyncWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        return when (syncRepository.syncWithServer()) {
+        return when (val result = syncRepository.syncWithServer()) {
             is Resource.Success -> {
-                // ponytail: send notification if any budget over limit after sync
                 sendBudgetAlertIfNeeded()
                 Result.success()
             }

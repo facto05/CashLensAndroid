@@ -34,7 +34,8 @@ class SyncRepository @Inject constructor(
         }
 
         val request = SyncRequest(transactions = transactions)
-        when (val result = safeApiCall { api.sync(request) }) {
+        val result = safeApiCall { api.sync(request) }
+        return when (result) {
             is Resource.Success -> {
                 pending.forEach { syncQueueDao.updateStatus(it.id, "SYNCED") }
                 syncQueueDao.clearSynced()
@@ -42,6 +43,7 @@ class SyncRepository @Inject constructor(
             }
             is Resource.Error -> result
             Resource.Loading -> Resource.Loading
+            else -> Resource.Error("Unexpected")
         }
     }
 }
